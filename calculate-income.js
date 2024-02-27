@@ -316,39 +316,27 @@ function calculateTaxes() {
 
 
     function calculateFederalTax() {
-    var globalProfit = parseFloat(globalProfitInput.value);
-    var businessType = businessTypeSelect.value.toUpperCase();
+        var globalProfit = parseFloat(globalProfitInput.value);
 
-    console.log("Global Profit:", globalProfit);
+        console.log("Global Profit:", globalProfit);
 
-    if (!isNaN(globalProfit)) {
-        var federalTax;
-        var federalTaxPercentage;
+        if (!isNaN(globalProfit)) {
+            var federalTax = calculateFederalTaxAmount(globalProfit);
+            var federalTaxPercentage = calculateFederalTaxPercentage(globalProfit);
 
-        if (businessType === "CORP") {
-            // Si el tipo de negocio es "CORP", el impuesto federal siempre es el 21%
-            federalTaxPercentage = 21;
-            federalTax = globalProfit * (federalTaxPercentage / 100);
+            var federalTaxOutput = document.getElementById("federal-tax");
+            var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
+
+            federalTaxOutput.textContent = "$" + federalTax.toFixed(2);
+            federalTaxPercentageOutput.textContent = federalTaxPercentage + "%";
         } else {
-            // Calcula el impuesto federal según las tasas escalonadas normales
-            federalTax = calculateFederalTaxAmount(globalProfit);
-            federalTaxPercentage = calculateFederalTaxPercentage(globalProfit);
+            var federalTaxOutput = document.getElementById("federal-tax");
+            var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
+
+            federalTaxOutput.textContent = "N/A";
+            federalTaxPercentageOutput.textContent = "N/A";
         }
-
-        var federalTaxOutput = document.getElementById("federal-tax");
-        var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
-
-        federalTaxOutput.textContent = "$" + federalTax.toFixed(2);
-        federalTaxPercentageOutput.textContent = federalTaxPercentage + "%";
-    } else {
-        var federalTaxOutput = document.getElementById("federal-tax");
-        var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
-
-        federalTaxOutput.textContent = "N/A";
-        federalTaxPercentageOutput.textContent = "N/A";
     }
-}
-
 
 
     function calculateTotalEffectiveTaxRate() {
@@ -431,5 +419,3 @@ function calculateTaxes() {
             percentageLine.textContent = ""; // Ocultar el porcentaje si no es relevante
         }
     }
-
-    
