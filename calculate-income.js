@@ -328,7 +328,7 @@ function calculateTaxes() {
             var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
 
             federalTaxOutput.textContent = "$" + federalTax.toFixed(2);
-            federalTaxPercentageOutput.textContent = "Porcentaje: " + federalTaxPercentage + "%";
+            federalTaxPercentageOutput.textContent = federalTaxPercentage + "%";
         } else {
             var federalTaxOutput = document.getElementById("federal-tax");
             var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
@@ -414,7 +414,7 @@ function calculateTaxes() {
 
         // Mostrar u ocultar la línea del porcentaje y actualizar su contenido
         if (stateTaxRate && stateTaxRate.percentage !== 0) {
-            percentageLine.textContent = "Porcentaje: " + stateTaxRate.percentage + "%";
+            percentageLine.textContent = stateTaxRate.percentage + "%";
         } else {
             percentageLine.textContent = ""; // Ocultar el porcentaje si no es relevante
         }
