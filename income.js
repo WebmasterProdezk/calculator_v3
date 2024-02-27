@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("DOMContentLoaded event fired.");
+    console.log("Ejecutandose correctamente");
     
     var globalProfitInput = document.getElementById("global-profit");
     var businessStateSelect = document.getElementById("business-state");
