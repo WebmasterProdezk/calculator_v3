@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "LLC-P": {"percentage": 5.40, "flat": 0}
     },
     "kentucky": {
-        "CORP": {"percentage": 5.00, "flat": 5.00},
+        "CORP": {"percentage": 5.00, "flat": 0},
         "LLC-D": {"percentage": 5.00, "flat": 0},
         "LLC-P": {"percentage": 5.00, "flat": 0}
     },
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "LLC-P": {"percentage": 0, "flat": 0}
     },
     "massachusetts": {
-        "CORP": {"percentage": 6.50, "flat": 5.00},
+        "CORP": {"percentage": 6.50, "flat": 0},
         "LLC-D": {"percentage": 5.00, "flat": 0},
         "LLC-P": {"percentage": 5.00, "flat": 0}
     },
@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "LLC-P": {"percentage": 5.00, "flat": 0}
     },
     "missouri": {
-        "CORP": {"percentage": 18.15, "flat": 3.40},
+        "CORP": {"percentage": 18.15, "flat": 0},
         "LLC-D": {"percentage": 3.40, "flat": 0},
         "LLC-P": {"percentage": 3.25, "flat": 0}
     },
@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "LLC-P": {"percentage": 7.80, "flat": 0}
     },
     "pennsylvania": {
-        "CORP": {"percentage": 8.99, "flat": 3.07},
+        "CORP": {"percentage": 8.99, "flat": 0},
         "LLC-D": {"percentage": 3.07, "flat": 0},
         "LLC-P": {"percentage": 3.07, "flat": 0}
     },
