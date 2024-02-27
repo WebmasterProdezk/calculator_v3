@@ -1,17 +1,17 @@
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("Ejecutandose correctamente");
+    console.log("DOMContentLoaded event fired.");
     
     var globalProfitInput = document.getElementById("global-profit");
     var businessStateSelect = document.getElementById("business-state");
     var businessTypeSelect = document.getElementById("business-type");
     var totalTaxStateOutput = document.getElementById("total-tax-state");
+    var percentageTaxStateOutput = document.getElementById("percentage-tax-state");
     var totalEffectiveTaxRateOutput = document.getElementById("total-effective-tax-rate");
 
     // Llama a las funciones de cálculo cuando los eventos relevantes ocurren
     globalProfitInput.addEventListener("input", calculateTaxes);
     businessStateSelect.addEventListener("change", calculateTaxes);
     businessTypeSelect.addEventListener("change", calculateTaxes);
-
 
 
         // Definir los impuestos para cada estado y tipo de negocio
@@ -239,7 +239,7 @@ document.addEventListener("DOMContentLoaded", function() {
     },
     "vermont": {
         "CORP": {"percentage": 7.00, "flat": 0},
-        "LLC-D": {"percentage": 0, "flat": 7.00},
+        "LLC-D": {"percentage": 0, "flat": 0},
         "LLC-P": {"percentage": 7.00, "flat": 0}
     },
     "virginia": {
@@ -302,23 +302,20 @@ function calculateTaxes() {
             totalTaxStateOutput.textContent = "$" + stateTax.toFixed(2);
 
             if (stateTaxRate.percentage !== 0) {
-                var percentageLine = document.createElement("output");
-                percentageLine.textContent = stateTaxRate.percentage + "%";
-                percentageLine.setAttribute("name", "percentage");
-                totalTaxStateOutput.parentNode.appendChild(percentageLine);
+                percentageTaxStateOutput.textContent = stateTaxRate.percentage + "%";
+            } else {
+                percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
             }
         } else {
             totalTaxStateOutput.textContent = "N/A";
-            var existingPercentageLine = totalTaxStateOutput.parentNode.querySelector("output[name='percentage']");
-            if (existingPercentageLine) {
-                existingPercentageLine.remove();
-            }
+            percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
         }
     }
 
 
 
-     function calculateFederalTax() {
+
+    function calculateFederalTax() {
         var globalProfit = parseFloat(globalProfitInput.value);
 
         console.log("Global Profit:", globalProfit);
@@ -380,7 +377,6 @@ function calculateTaxes() {
 
         return taxAmount;
     }
-
 
     function calculateFederalTaxPercentage(profit) {
         var federalTax = calculateFederalTaxAmount(profit);
