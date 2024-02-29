@@ -1,4 +1,5 @@
-document.addEventListener("DOMContentLoaded", function() {
+
+ document.addEventListener("DOMContentLoaded", function() {
     console.log("DOMContentLoaded event fired.");
     
     var globalProfitInput = document.getElementById("global-profit");
@@ -279,64 +280,82 @@ function calculateTaxes() {
         calculateTotalEffectiveTaxRate();
     }
     function calculateStateTax() {
-        var globalProfit = parseFloat(globalProfitInput.value);
-        var businessType = businessTypeSelect.value.toUpperCase();
-        var state = businessStateSelect.value.toLowerCase();
+    var globalProfit = parseFloat(globalProfitInput.value);
+    var businessType = businessTypeSelect.value.toUpperCase();
+    var state = businessStateSelect.value.toLowerCase();
 
-        var stateTaxRate = getStateTaxRate(state, businessType);
+    var stateTaxRate;
 
-        console.log("Global Profit:", globalProfit);
-        console.log("Business Type:", businessType);
-        console.log("State:", state);
-        console.log("State Tax Rate:", stateTaxRate);
+    if (businessType === "S-CORP") {
+        // Obtener la tasa de impuestos correspondiente a "LLC-D" cuando el tipo de negocio sea "S-CORP"
+        stateTaxRate = getStateTaxRate(state, "LLC-D");
+    } else {
+        stateTaxRate = getStateTaxRate(state, businessType);
+    }
 
-        if (!isNaN(globalProfit) && stateTaxRate !== null) {
-            var stateTax;
+    console.log("Global Profit:", globalProfit);
+    console.log("Business Type:", businessType);
+    console.log("State:", state);
+    console.log("State Tax Rate:", stateTaxRate);
 
-            if (stateTaxRate.flat !== 0) {
-                stateTax = stateTaxRate.flat;
-            } else {
-                stateTax = globalProfit * (parseFloat(stateTaxRate.percentage) / 100);
-            }
+    if (!isNaN(globalProfit) && stateTaxRate !== null) {
+        var stateTax;
 
-            totalTaxStateOutput.textContent = "$" + stateTax.toFixed(2);
-
-            if (stateTaxRate.percentage !== 0) {
-                percentageTaxStateOutput.textContent = stateTaxRate.percentage + "%";
-            } else {
-                percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
-            }
+        if (stateTaxRate.flat !== 0) {
+            stateTax = stateTaxRate.flat;
         } else {
-            totalTaxStateOutput.textContent = "N/A";
+            stateTax = globalProfit * (parseFloat(stateTaxRate.percentage) / 100);
+        }
+
+        totalTaxStateOutput.textContent = "$" + stateTax.toFixed(2);
+
+        if (stateTaxRate.percentage !== 0) {
+            percentageTaxStateOutput.textContent = stateTaxRate.percentage + "%";
+        } else {
             percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
         }
+    } else {
+        totalTaxStateOutput.textContent = "N/A";
+        percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
     }
+}
 
 
 
-function calculateFederalTax() {
-        var globalProfit = parseFloat(globalProfitInput.value);
 
-        console.log("Global Profit:", globalProfit);
+    function calculateFederalTax() {
+    var globalProfit = parseFloat(globalProfitInput.value);
+    var businessType = businessTypeSelect.value.toUpperCase();
 
-        if (!isNaN(globalProfit)) {
-            var federalTax = calculateFederalTaxAmount(globalProfit);
-            var federalTaxPercentage = calculateFederalTaxPercentage(globalProfit);
+    console.log("Global Profit:", globalProfit);
 
-            var federalTaxOutput = document.getElementById("federal-tax");
-            var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
+    if (!isNaN(globalProfit)) {
+        var federalTax;
+        var federalTaxPercentage;
 
-            federalTaxOutput.textContent = "$" + federalTax.toFixed(2);
-            federalTaxPercentageOutput.textContent = "Porcentaje: " + federalTaxPercentage + "%";
+        if (businessType === "CORP") {
+            // Si el tipo de negocio es "CORP", el impuesto federal siempre es el 21%
+            federalTaxPercentage = 21;
+            federalTax = globalProfit * (federalTaxPercentage / 100);
         } else {
-            var federalTaxOutput = document.getElementById("federal-tax");
-            var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
-
-            federalTaxOutput.textContent = "N/A";
-            federalTaxPercentageOutput.textContent = "N/A";
+            // Calcula el impuesto federal según las tasas escalonadas normales
+            federalTax = calculateFederalTaxAmount(globalProfit);
+            federalTaxPercentage = calculateFederalTaxPercentage(globalProfit);
         }
-    }
 
+        var federalTaxOutput = document.getElementById("federal-tax");
+        var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
+
+        federalTaxOutput.textContent = "$" + federalTax.toFixed(2);
+        federalTaxPercentageOutput.textContent = federalTaxPercentage + "%";
+    } else {
+        var federalTaxOutput = document.getElementById("federal-tax");
+        var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
+
+        federalTaxOutput.textContent = "N/A";
+        federalTaxPercentageOutput.textContent = "N/A";
+    }
+}
 
 
 
@@ -399,24 +418,31 @@ function calculateFederalTax() {
 
 
     function updatePercentageDisplay() {
-        var selectedBusinessType = businessTypeSelect.value.toUpperCase();
-        var state = businessStateSelect.value.toLowerCase();
+    var selectedBusinessType = businessTypeSelect.value.toUpperCase();
+    var state = businessStateSelect.value.toLowerCase();
 
-        // Obtener la tarifa de impuestos para el estado y el tipo de negocio seleccionados
-        var stateTaxRate = getStateTaxRate(state, selectedBusinessType);
+    var stateTaxRate;
 
-        // Obtener o crear la línea del porcentaje
-        var percentageLine = totalTaxStateOutput.parentNode.querySelector("output[name='percentage']");
-        if (!percentageLine) {
-            percentageLine = document.createElement("output");
-            percentageLine.setAttribute("name", "percentage");
-            totalTaxStateOutput.parentNode.appendChild(percentageLine);
-        }
-
-        // Mostrar u ocultar la línea del porcentaje y actualizar su contenido
-        if (stateTaxRate && stateTaxRate.percentage !== 0) {
-            percentageLine.textContent = stateTaxRate.percentage + "%";
-        } else {
-            percentageLine.textContent = ""; // Ocultar el porcentaje si no es relevante
-        }
+    if (selectedBusinessType === "S-CORP") {
+        // Obtener la tasa de impuestos correspondiente a "LLC-D" cuando el tipo de negocio sea "S-CORP"
+        stateTaxRate = getStateTaxRate(state, "LLC-D");
+    } else {
+        stateTaxRate = getStateTaxRate(state, selectedBusinessType);
     }
+
+    // Obtener o crear la línea del porcentaje
+    var percentageLine = totalTaxStateOutput.parentNode.querySelector("output[name='percentage']");
+    if (!percentageLine) {
+        percentageLine = document.createElement("output");
+        percentageLine.setAttribute("name", "percentage");
+        totalTaxStateOutput.parentNode.appendChild(percentageLine);
+    }
+
+    // Mostrar u ocultar la línea del porcentaje y actualizar su contenido
+    if (stateTaxRate && stateTaxRate.percentage !== 0) {
+        percentageLine.textContent = "Porcentaje: " + stateTaxRate.percentage + "%";
+    } else {
+        percentageLine.textContent = ""; // Ocultar el porcentaje si no es relevante
+    }
+}
+    
