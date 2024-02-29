@@ -1,18 +1,35 @@
 
- document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
     console.log("DOMContentLoaded event fired.");
-    
+
     var globalProfitInput = document.getElementById("global-profit");
     var businessStateSelect = document.getElementById("business-state");
     var businessTypeSelect = document.getElementById("business-type");
     var totalTaxStateOutput = document.getElementById("total-tax-state");
     var percentageTaxStateOutput = document.getElementById("percentage-tax-state");
     var totalEffectiveTaxRateOutput = document.getElementById("total-effective-tax-rate");
+    var ownershipInput = document.getElementById("ownership");
+    var partnerProfitOutput = document.getElementById("partner-profit");
 
     // Llama a las funciones de cálculo cuando los eventos relevantes ocurren
     globalProfitInput.addEventListener("input", calculateTaxes);
     businessStateSelect.addEventListener("change", calculateTaxes);
     businessTypeSelect.addEventListener("change", calculateTaxes);
+    ownershipInput.addEventListener("input", calculatePartnerProfit);
+
+
+ globalProfitInput.addEventListener("input", calculateTaxes);
+    businessStateSelect.addEventListener("change", function() {
+        calculateTaxes();
+        updatePercentageDisplay(); // Llama a updatePercentageDisplay cuando cambia el estado del negocio
+        calculatePartnerProfit(); 
+    });
+    businessTypeSelect.addEventListener("change", function() {
+        calculateTaxes();
+        updatePercentageDisplay(); // Llama a updatePercentageDisplay cuando cambia el tipo de negocio
+        calculatePartnerProfit();
+    });
+    ownershipInput.addEventListener("input", calculatePartnerProfit);
 
 
         // Definir los impuestos para cada estado y tipo de negocio
@@ -278,7 +295,13 @@ function calculateTaxes() {
         calculateStateTax();
         calculateFederalTax();
         calculateTotalEffectiveTaxRate();
+        calculatePartnerProfit();
     }
+    
+
+   
+
+
     function calculateStateTax() {
     var globalProfit = parseFloat(globalProfitInput.value);
     var businessType = businessTypeSelect.value.toUpperCase();
@@ -373,6 +396,18 @@ function calculateTaxes() {
         console.log("Total Effective Tax Rate:", totalTax.toFixed(2));
     }
 
+    function calculatePartnerProfit() {
+        var globalProfit = parseFloat(globalProfitInput.value);
+        var ownershipPercentage = parseFloat(ownershipInput.value);
+        
+        if (!isNaN(globalProfit) && !isNaN(ownershipPercentage)) {
+            var partnerProfit = (ownershipPercentage / 100) * globalProfit;
+            partnerProfitOutput.textContent = "$" + partnerProfit.toFixed(2);
+        } else {
+            partnerProfitOutput.textContent = "N/A";
+        }
+    }
+
     function calculateFederalTaxAmount(profit) {
         var taxAmount = 0;
         var brackets = [
@@ -440,7 +475,7 @@ function calculateTaxes() {
 
     // Mostrar u ocultar la línea del porcentaje y actualizar su contenido
     if (stateTaxRate && stateTaxRate.percentage !== 0) {
-        percentageLine.textContent = "Porcentaje: " + stateTaxRate.percentage + "%";
+        percentageLine.textContent = stateTaxRate.percentage + "%";
     } else {
         percentageLine.textContent = ""; // Ocultar el porcentaje si no es relevante
     }
