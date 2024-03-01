@@ -396,17 +396,8 @@ function calculateFederalTax() {
             federalTaxPercentage = 21;
             federalTax = globalProfit * (federalTaxPercentage / 100);
         } else {
-            // Calcula el impuesto federal según las tasas escalonadas normales o el partner profit para LLC-P
-            if (businessType === "LLC-P") {
-                var partnerProfit = parseFloat(partnerProfitOutput.textContent.replace("$", ""));
-                if (!isNaN(partnerProfit)) {
-                    federalTax = calculateFederalTaxAmount(partnerProfit);
-                } else {
-                    federalTax = 0;
-                }
-            } else {
-                federalTax = calculateFederalTaxAmount(globalProfit);
-            }
+            // Calcula el impuesto federal según las tasas escalonadas normales o el global profit para LLC-P
+            federalTax = calculateFederalTaxAmount(globalProfit);
             federalTaxPercentage = calculateFederalTaxPercentage(globalProfit);
         }
 
@@ -423,6 +414,7 @@ function calculateFederalTax() {
         federalTaxPercentageOutput.textContent = "N/A";
     }
 }
+
 
 
 
