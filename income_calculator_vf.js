@@ -15,21 +15,23 @@ document.addEventListener("DOMContentLoaded", function() {
     globalProfitInput.addEventListener("input", calculateTaxes);
     businessStateSelect.addEventListener("change", calculateTaxes);
     businessTypeSelect.addEventListener("change", calculateTaxes);
-    ownershipInput.addEventListener("input", calculatePartnerProfit);
-
-
- globalProfitInput.addEventListener("input", calculateTaxes);
-    businessStateSelect.addEventListener("change", function() {
-        calculateTaxes();
-        updatePercentageDisplay(); // Llama a updatePercentageDisplay cuando cambia el estado del negocio
-        calculatePartnerProfit(); 
-    });
-    businessTypeSelect.addEventListener("change", function() {
-        calculateTaxes();
-        updatePercentageDisplay(); // Llama a updatePercentageDisplay cuando cambia el tipo de negocio
+    ownershipInput.addEventListener("input", function() {
         calculatePartnerProfit();
+        calculateStateTax(); // Agrega esta línea para actualizar el impuesto estatal cuando cambie el ownership
     });
-    ownershipInput.addEventListener("input", calculatePartnerProfit);
+
+    partnerProfitOutput.addEventListener("input", function() {
+        if (businessTypeSelect.value.toUpperCase() === "LLC-P") {
+            calculateTaxes();
+        }
+    });
+
+
+
+    ownershipInput.addEventListener("input", function() {
+    calculatePartnerProfit();
+    calculateStateTax(); // Agrega esta línea para actualizar el impuesto estatal cuando cambie el ownership
+});
 
 
         // Definir los impuestos para cada estado y tipo de negocio
@@ -301,7 +303,6 @@ function calculateTaxes() {
 
    
 
-
     function calculateStateTax() {
     var globalProfit = parseFloat(globalProfitInput.value);
     var businessType = businessTypeSelect.value.toUpperCase();
@@ -309,39 +310,68 @@ function calculateTaxes() {
 
     var stateTaxRate;
 
-    if (businessType === "S-CORP") {
-        // Obtener la tasa de impuestos correspondiente a "LLC-D" cuando el tipo de negocio sea "S-CORP"
-        stateTaxRate = getStateTaxRate(state, "LLC-D");
-    } else {
-        stateTaxRate = getStateTaxRate(state, businessType);
-    }
+    if (businessType === "LLC-P") {
+        // Si el tipo de negocio es LLC-P, calcula el impuesto estatal basado en el beneficio del socio (partner-profit)
+        var partnerProfit = parseFloat(partnerProfitOutput.textContent.replace("$", ""));
+        stateTaxRate = getStateTaxRate(state, "LLC-P");
 
-    console.log("Global Profit:", globalProfit);
-    console.log("Business Type:", businessType);
-    console.log("State:", state);
-    console.log("State Tax Rate:", stateTaxRate);
+        if (!isNaN(partnerProfit) && stateTaxRate !== null) {
+            var stateTax;
 
-    if (!isNaN(globalProfit) && stateTaxRate !== null) {
-        var stateTax;
+            if (stateTaxRate.flat !== 0) {
+                stateTax = stateTaxRate.flat;
+            } else {
+                stateTax = partnerProfit * (parseFloat(stateTaxRate.percentage) / 10);
+            }
 
-        if (stateTaxRate.flat !== 0) {
-            stateTax = stateTaxRate.flat;
+            totalTaxStateOutput.textContent = "$" + stateTax.toFixed(2);
+
+            if (stateTaxRate.percentage !== 0) {
+                percentageTaxStateOutput.textContent = stateTaxRate.percentage + "%";
+            } else {
+                percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
+            }
         } else {
-            stateTax = globalProfit * (parseFloat(stateTaxRate.percentage) / 100);
-        }
-
-        totalTaxStateOutput.textContent = "$" + stateTax.toFixed(2);
-
-        if (stateTaxRate.percentage !== 0) {
-            percentageTaxStateOutput.textContent = stateTaxRate.percentage + "%";
-        } else {
+            totalTaxStateOutput.textContent = "N/A";
             percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
         }
     } else {
-        totalTaxStateOutput.textContent = "N/A";
-        percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
+        // En otros casos, el cálculo sigue siendo igual al original
+        if (businessType === "S-CORP") {
+            // Obtener la tasa de impuestos correspondiente a "LLC-D" cuando el tipo de negocio sea "S-CORP"
+            stateTaxRate = getStateTaxRate(state, "LLC-D");
+        } else {
+            stateTaxRate = getStateTaxRate(state, businessType);
+        }
+
+        console.log("Global Profit:", globalProfit);
+        console.log("Business Type:", businessType);
+        console.log("State:", state);
+        console.log("State Tax Rate:", stateTaxRate);
+
+        if (!isNaN(globalProfit) && stateTaxRate !== null) {
+            var stateTax;
+
+            if (stateTaxRate.flat !== 0) {
+                stateTax = stateTaxRate.flat;
+            } else {
+                stateTax = globalProfit * (parseFloat(stateTaxRate.percentage) / 100);
+            }
+
+            totalTaxStateOutput.textContent = "$" + stateTax.toFixed(2);
+
+            if (stateTaxRate.percentage !== 0) {
+                percentageTaxStateOutput.textContent = stateTaxRate.percentage + "%";
+            } else {
+                percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
+            }
+        } else {
+            totalTaxStateOutput.textContent = "N/A";
+            percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
+        }
     }
 }
+
 
 
 
