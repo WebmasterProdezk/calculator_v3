@@ -1,4 +1,4 @@
-
+>
 document.addEventListener("DOMContentLoaded", function() {
     console.log("DOMContentLoaded event fired.");
 
@@ -434,7 +434,28 @@ function calculateFederalTax() {
 
         totalEffectiveTaxRateOutput.textContent = "$" + totalTax.toFixed(2);
         console.log("Total Effective Tax Rate:", totalTax.toFixed(2));
+
+        calculateTotalEffectiveTaxPercentage();
     }
+
+
+
+
+
+    function calculateTotalEffectiveTaxPercentage() {
+    var globalProfit = parseFloat(globalProfitInput.value);
+    var totalEffectiveTax = parseFloat(totalEffectiveTaxRateOutput.textContent.replace("$", ""));
+
+    if (!isNaN(globalProfit) && !isNaN(totalEffectiveTax) && globalProfit > 0) {
+        var totalEffectiveTaxPercentage = (totalEffectiveTax / globalProfit) * 100;
+        document.getElementById("effective-tax-percentage").textContent = totalEffectiveTaxPercentage.toFixed(2) + "%";
+    } else {
+        document.getElementById("effective-tax-percentage").textContent = "N/A";
+    }
+}
+
+
+
 
     function calculatePartnerProfit() {
         var globalProfit = parseFloat(globalProfitInput.value);
