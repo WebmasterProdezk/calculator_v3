@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (!isNaN(withholdingTax) && !isNaN(federalTax)) {
             var taxRefund = withholdingTax - federalTax;
-            document.getElementById("tax-refund-value").textContent = "$" + taxRefund.toFixed(2);
+            document.getElementById("tax-refund-value").textContent = "$" + taxRefund.toFixed(0);
         } else {
             document.getElementById("tax-refund-value").textContent = "N/A";
         }
@@ -346,7 +346,7 @@ function calculateTaxes() {
             stateTax = globalProfit * (parseFloat(stateTaxRate.percentage) / 100);
         }
 
-        totalTaxStateOutput.textContent = "$" + stateTax.toFixed(2);
+        totalTaxStateOutput.textContent = "$" + stateTax.toFixed(0);
 
         if (stateTaxRate.percentage !== 0) {
             percentageTaxStateOutput.textContent = stateTaxRate.percentage + "%";
@@ -358,7 +358,7 @@ function calculateTaxes() {
         var partnerProfit = parseFloat(partnerProfitOutput.textContent.replace("$", ""));
         if (!isNaN(partnerProfit)) {
             var withholdingTax = partnerProfit * 0.37;
-            document.getElementById("withholding-tax").textContent = "$" + withholdingTax.toFixed(2);
+            document.getElementById("withholding-tax").textContent = "$" + withholdingTax.toFixed(0);
         } else {
             document.getElementById("withholding-tax").textContent = "N/A";
         }
@@ -397,14 +397,14 @@ function calculateFederalTax() {
         var federalTaxOutput = document.getElementById("federal-tax");
         var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
 
-        federalTaxOutput.textContent = "$" + federalTax.toFixed(2);
+        federalTaxOutput.textContent = "$" + federalTax.toFixed(0);
         federalTaxPercentageOutput.textContent = federalTaxPercentage + "%";
 
         // Calculate withholding tax based on partner profit
         var partnerProfit = parseFloat(partnerProfitOutput.textContent.replace("$", ""));
         if (!isNaN(partnerProfit)) {
             var withholdingTax = partnerProfit * 0.37;
-            document.getElementById("withholding-tax").textContent = "$" + withholdingTax.toFixed(2);
+            document.getElementById("withholding-tax").textContent = "$" + withholdingTax.toFixed(0);
         } else {
             document.getElementById("withholding-tax").textContent = "N/A";
         }
@@ -432,8 +432,8 @@ function calculateFederalTax() {
         var totalTax = stateTax + federalTax;
         console.log("Total Tax:", totalTax);
 
-        totalEffectiveTaxRateOutput.textContent = "$" + totalTax.toFixed(2);
-        console.log("Total Effective Tax Rate:", totalTax.toFixed(2));
+        totalEffectiveTaxRateOutput.textContent = "$" + totalTax.toFixed(0);
+        console.log("Total Effective Tax Rate:", totalTax.toFixed(0));
 
         calculateTotalEffectiveTaxPercentage();
     }
@@ -448,7 +448,7 @@ function calculateFederalTax() {
 
     if (!isNaN(globalProfit) && !isNaN(totalEffectiveTax) && globalProfit > 0) {
         var totalEffectiveTaxPercentage = (totalEffectiveTax / globalProfit) * 100;
-        document.getElementById("effective-tax-percentage").textContent = totalEffectiveTaxPercentage.toFixed(2) + "%";
+        document.getElementById("effective-tax-percentage").textContent = totalEffectiveTaxPercentage.toFixed(0) + "%";
     } else {
         document.getElementById("effective-tax-percentage").textContent = "N/A";
     }
@@ -463,7 +463,7 @@ function calculateFederalTax() {
         
         if (!isNaN(globalProfit) && !isNaN(ownershipPercentage)) {
             var partnerProfit = (ownershipPercentage / 100) * globalProfit;
-            partnerProfitOutput.textContent = "$" + partnerProfit.toFixed(2);
+            partnerProfitOutput.textContent = "$" + partnerProfit.toFixed(0);
         } else {
             partnerProfitOutput.textContent = "N/A";
         }
@@ -497,7 +497,7 @@ function calculateFederalTax() {
     function calculateFederalTaxPercentage(profit) {
         var federalTax = calculateFederalTaxAmount(profit);
         var federalTaxPercentage = (federalTax / profit) * 100;
-        return federalTaxPercentage.toFixed(2);
+        return federalTaxPercentage.toFixed(0);
     }
 
 
