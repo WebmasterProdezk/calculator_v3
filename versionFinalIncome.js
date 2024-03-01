@@ -13,6 +13,17 @@ document.addEventListener("DOMContentLoaded", function() {
     var federalTaxOutput = document.getElementById("federal-tax");
     var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
     
+    function calculateTaxRefund() {
+        var withholdingTax = parseFloat(document.getElementById("withholding-tax").textContent.replace("$", ""));
+        var federalTax = parseFloat(document.getElementById("federal-tax").textContent.replace("$", ""));
+
+        if (!isNaN(withholdingTax) && !isNaN(federalTax)) {
+            var taxRefund = withholdingTax - federalTax;
+            document.getElementById("tax-refund-value").textContent = "$" + taxRefund.toFixed(2);
+        } else {
+            document.getElementById("tax-refund-value").textContent = "N/A";
+        }
+    }
 
     // Llama a las funciones de cálculo cuando los eventos relevantes ocurren
     globalProfitInput.addEventListener("input", function() {
@@ -20,23 +31,32 @@ document.addEventListener("DOMContentLoaded", function() {
         if (businessTypeSelect.value.toUpperCase() === "LLC-P") {
             calculateFederalTax(); // Recalcular el impuesto federal si el tipo de negocio es "LLC-P"
         }
+        calculateTaxRefund(); // Agregado para actualizar el reembolso de impuestos cuando cambian los ingresos globales
     });
-    businessStateSelect.addEventListener("change", calculateTaxes);
-    businessTypeSelect.addEventListener("change", calculateTaxes);
+    businessStateSelect.addEventListener("change", function() {
+        calculateTaxes();
+        calculateTaxRefund(); // Agregado para actualizar el reembolso de impuestos cuando cambia el estado del negocio
+    });
+    businessTypeSelect.addEventListener("change", function() {
+        calculateTaxes();
+        if (businessTypeSelect.value.toUpperCase() === "LLC-P") {
+            calculateFederalTax(); // Recalcular el impuesto federal si el tipo de negocio es "LLC-P"
+        }
+        calculateTaxRefund(); // Agregado para actualizar el reembolso de impuestos cuando cambia el tipo de negocio
+    });
     ownershipInput.addEventListener("input", function() {
         calculatePartnerProfit();
         calculateStateTax();
         calculateFederalTax(); // Agrega esta línea para calcular los impuestos federales cuando cambie el ownership
+        calculateTaxRefund(); // Agregado para actualizar el reembolso de impuestos cuando cambia el ownership
     });
     partnerProfitOutput.addEventListener("input", function() {
         if (businessTypeSelect.value.toUpperCase() === "LLC-P") {
             calculateTaxes();
             calculateFederalTax(); // Recalcular el impuesto federal cuando cambie el partner-profit y el tipo de negocio es "LLC-P"
+            calculateTaxRefund(); // Agregado para actualizar el reembolso de impuestos cuando cambia el partner-profit
         }
     });
-
-
-    
 
 
 
@@ -308,7 +328,6 @@ function calculateTaxes() {
     
 
    
-
     function calculateStateTax() {
     var globalProfit = parseFloat(globalProfitInput.value);
     var businessType = businessTypeSelect.value.toUpperCase();
@@ -316,64 +335,40 @@ function calculateTaxes() {
 
     var stateTaxRate;
 
-    if (businessType === "LLC-P") {
-        stateTaxRate = getStateTaxRate(state, "LLC-P");
+    stateTaxRate = getStateTaxRate(state, businessType);
 
-        if (!isNaN(globalProfit) && stateTaxRate !== null) {
-            var stateTax;
+    if (!isNaN(globalProfit) && stateTaxRate !== null) {
+        var stateTax;
 
-            if (stateTaxRate.flat !== 0) {
-                stateTax = stateTaxRate.flat;
-            } else {
-                stateTax = globalProfit * (parseFloat(stateTaxRate.percentage) / 100);
-            }
-
-            totalTaxStateOutput.textContent = "$" + stateTax.toFixed(2);
-
-            if (stateTaxRate.percentage !== 0) {
-                percentageTaxStateOutput.textContent = stateTaxRate.percentage + "%";
-            } else {
-                percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
-            }
-            
-            // Calculate withholding tax based on partner profit
-            var partnerProfit = parseFloat(partnerProfitOutput.textContent.replace("$", ""));
-            if (!isNaN(partnerProfit)) {
-                var withholdingTax = partnerProfit * 0.37;
-                document.getElementById("withholding-tax").textContent = "$" + withholdingTax.toFixed(2);
-            } else {
-                document.getElementById("withholding-tax").textContent = "N/A";
-            }
+        if (stateTaxRate.flat !== 0) {
+            stateTax = stateTaxRate.flat;
         } else {
-            totalTaxStateOutput.textContent = "N/A";
+            stateTax = globalProfit * (parseFloat(stateTaxRate.percentage) / 100);
+        }
+
+        totalTaxStateOutput.textContent = "$" + stateTax.toFixed(2);
+
+        if (stateTaxRate.percentage !== 0) {
+            percentageTaxStateOutput.textContent = stateTaxRate.percentage + "%";
+        } else {
             percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
+        }
+        
+        // Calculate withholding tax based on partner profit
+        var partnerProfit = parseFloat(partnerProfitOutput.textContent.replace("$", ""));
+        if (!isNaN(partnerProfit)) {
+            var withholdingTax = partnerProfit * 0.37;
+            document.getElementById("withholding-tax").textContent = "$" + withholdingTax.toFixed(2);
+        } else {
+            document.getElementById("withholding-tax").textContent = "N/A";
         }
     } else {
-        // Cálculo basado en globalProfit para todos los demás tipos de negocios
-        stateTaxRate = getStateTaxRate(state, businessType);
-
-        if (!isNaN(globalProfit) && stateTaxRate !== null) {
-            var stateTax;
-
-            if (stateTaxRate.flat !== 0) {
-                stateTax = stateTaxRate.flat;
-            } else {
-                stateTax = globalProfit * (parseFloat(stateTaxRate.percentage) / 100);
-            }
-
-            totalTaxStateOutput.textContent = "$" + stateTax.toFixed(2);
-
-            if (stateTaxRate.percentage !== 0) {
-                percentageTaxStateOutput.textContent = stateTaxRate.percentage + "%";
-            } else {
-                percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
-            }
-        } else {
-            totalTaxStateOutput.textContent = "N/A";
-            percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
-        }
+        totalTaxStateOutput.textContent = "N/A";
+        percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
+        document.getElementById("withholding-tax").textContent = "N/A"; // Limpiar el impuesto retenido
     }
 }
+
 
 
 
@@ -384,8 +379,6 @@ function calculateTaxes() {
 function calculateFederalTax() {
     var globalProfit = parseFloat(globalProfitInput.value);
     var businessType = businessTypeSelect.value.toUpperCase();
-
-    console.log("Global Profit:", globalProfit);
 
     if (!isNaN(globalProfit)) {
         var federalTax;
@@ -406,12 +399,22 @@ function calculateFederalTax() {
 
         federalTaxOutput.textContent = "$" + federalTax.toFixed(2);
         federalTaxPercentageOutput.textContent = federalTaxPercentage + "%";
+
+        // Calculate withholding tax based on partner profit
+        var partnerProfit = parseFloat(partnerProfitOutput.textContent.replace("$", ""));
+        if (!isNaN(partnerProfit)) {
+            var withholdingTax = partnerProfit * 0.37;
+            document.getElementById("withholding-tax").textContent = "$" + withholdingTax.toFixed(2);
+        } else {
+            document.getElementById("withholding-tax").textContent = "N/A";
+        }
     } else {
         var federalTaxOutput = document.getElementById("federal-tax");
         var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
 
         federalTaxOutput.textContent = "N/A";
         federalTaxPercentageOutput.textContent = "N/A";
+        document.getElementById("withholding-tax").textContent = "N/A"; // Limpiar el impuesto retenido
     }
 }
 
@@ -489,6 +492,8 @@ function calculateFederalTax() {
 
 
 
+
+    
     function updatePercentageDisplay() {
     var selectedBusinessType = businessTypeSelect.value.toUpperCase();
     var state = businessStateSelect.value.toLowerCase();
