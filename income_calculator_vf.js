@@ -10,28 +10,34 @@ document.addEventListener("DOMContentLoaded", function() {
     var totalEffectiveTaxRateOutput = document.getElementById("total-effective-tax-rate");
     var ownershipInput = document.getElementById("ownership");
     var partnerProfitOutput = document.getElementById("partner-profit");
+    var federalTaxOutput = document.getElementById("federal-tax");
+    var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
+    
 
     // Llama a las funciones de cálculo cuando los eventos relevantes ocurren
-    globalProfitInput.addEventListener("input", calculateTaxes);
+    globalProfitInput.addEventListener("input", function() {
+        calculateTaxes();
+        if (businessTypeSelect.value.toUpperCase() === "LLC-P") {
+            calculateFederalTax(); // Recalcular el impuesto federal si el tipo de negocio es "LLC-P"
+        }
+    });
     businessStateSelect.addEventListener("change", calculateTaxes);
     businessTypeSelect.addEventListener("change", calculateTaxes);
     ownershipInput.addEventListener("input", function() {
         calculatePartnerProfit();
-        calculateStateTax(); // Agrega esta línea para actualizar el impuesto estatal cuando cambie el ownership
+        calculateStateTax();
+        calculateFederalTax(); // Agrega esta línea para calcular los impuestos federales cuando cambie el ownership
     });
-
     partnerProfitOutput.addEventListener("input", function() {
         if (businessTypeSelect.value.toUpperCase() === "LLC-P") {
             calculateTaxes();
+            calculateFederalTax(); // Recalcular el impuesto federal cuando cambie el partner-profit y el tipo de negocio es "LLC-P"
         }
     });
 
 
+    
 
-    ownershipInput.addEventListener("input", function() {
-    calculatePartnerProfit();
-    calculateStateTax(); // Agrega esta línea para actualizar el impuesto estatal cuando cambie el ownership
-});
 
 
         // Definir los impuestos para cada estado y tipo de negocio
@@ -311,17 +317,15 @@ function calculateTaxes() {
     var stateTaxRate;
 
     if (businessType === "LLC-P") {
-        // Si el tipo de negocio es LLC-P, calcula el impuesto estatal basado en el beneficio del socio (partner-profit)
-        var partnerProfit = parseFloat(partnerProfitOutput.textContent.replace("$", ""));
         stateTaxRate = getStateTaxRate(state, "LLC-P");
 
-        if (!isNaN(partnerProfit) && stateTaxRate !== null) {
+        if (!isNaN(globalProfit) && stateTaxRate !== null) {
             var stateTax;
 
             if (stateTaxRate.flat !== 0) {
                 stateTax = stateTaxRate.flat;
             } else {
-                stateTax = partnerProfit * (parseFloat(stateTaxRate.percentage) / 10);
+                stateTax = globalProfit * (parseFloat(stateTaxRate.percentage) / 100);
             }
 
             totalTaxStateOutput.textContent = "$" + stateTax.toFixed(2);
@@ -331,23 +335,22 @@ function calculateTaxes() {
             } else {
                 percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
             }
+            
+            // Calculate withholding tax based on partner profit
+            var partnerProfit = parseFloat(partnerProfitOutput.textContent.replace("$", ""));
+            if (!isNaN(partnerProfit)) {
+                var withholdingTax = partnerProfit * 0.37;
+                document.getElementById("withholding-tax").textContent = "$" + withholdingTax.toFixed(2);
+            } else {
+                document.getElementById("withholding-tax").textContent = "N/A";
+            }
         } else {
             totalTaxStateOutput.textContent = "N/A";
             percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
         }
     } else {
-        // En otros casos, el cálculo sigue siendo igual al original
-        if (businessType === "S-CORP") {
-            // Obtener la tasa de impuestos correspondiente a "LLC-D" cuando el tipo de negocio sea "S-CORP"
-            stateTaxRate = getStateTaxRate(state, "LLC-D");
-        } else {
-            stateTaxRate = getStateTaxRate(state, businessType);
-        }
-
-        console.log("Global Profit:", globalProfit);
-        console.log("Business Type:", businessType);
-        console.log("State:", state);
-        console.log("State Tax Rate:", stateTaxRate);
+        // Cálculo basado en globalProfit para todos los demás tipos de negocios
+        stateTaxRate = getStateTaxRate(state, businessType);
 
         if (!isNaN(globalProfit) && stateTaxRate !== null) {
             var stateTax;
@@ -376,7 +379,9 @@ function calculateTaxes() {
 
 
 
-    function calculateFederalTax() {
+
+
+function calculateFederalTax() {
     var globalProfit = parseFloat(globalProfitInput.value);
     var businessType = businessTypeSelect.value.toUpperCase();
 
@@ -391,8 +396,17 @@ function calculateTaxes() {
             federalTaxPercentage = 21;
             federalTax = globalProfit * (federalTaxPercentage / 100);
         } else {
-            // Calcula el impuesto federal según las tasas escalonadas normales
-            federalTax = calculateFederalTaxAmount(globalProfit);
+            // Calcula el impuesto federal según las tasas escalonadas normales o el partner profit para LLC-P
+            if (businessType === "LLC-P") {
+                var partnerProfit = parseFloat(partnerProfitOutput.textContent.replace("$", ""));
+                if (!isNaN(partnerProfit)) {
+                    federalTax = calculateFederalTaxAmount(partnerProfit);
+                } else {
+                    federalTax = 0;
+                }
+            } else {
+                federalTax = calculateFederalTaxAmount(globalProfit);
+            }
             federalTaxPercentage = calculateFederalTaxPercentage(globalProfit);
         }
 
@@ -409,6 +423,7 @@ function calculateTaxes() {
         federalTaxPercentageOutput.textContent = "N/A";
     }
 }
+
 
 
 
