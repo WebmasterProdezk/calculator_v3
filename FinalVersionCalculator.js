@@ -49,6 +49,7 @@
             calculateStateTax();
             calculateFederalTax(); // Agrega esta línea para calcular los impuestos federales cuando cambie el ownership
             calculateTaxRefund(); // Agregado para actualizar el reembolso de impuestos cuando cambia el ownership
+            calculateTotalEffectiveTaxRate();
         });
         partnerProfitOutput.addEventListener("input", function() {
             if (businessTypeSelect.value.toUpperCase() === "LLC-P") {
@@ -402,7 +403,7 @@ function calculateFederalTax() {
     if (businessType === "CORP") {
         // Si el tipo de negocio es "CORP", el impuesto federal siempre es el 21%
         federalTaxPercentage = 21;
-        federalTax = calculateFederalTaxAmount(parseFloat(globalProfitInput.value));
+        federalTax = parseFloat(globalProfitInput.value) * 0.21; // Calcula el impuesto federal directamente como el 21% del global profit
     } else {
         var partnerProfit = parseFloat(partnerProfitOutput.textContent.replace("$", ""));
         if (!isNaN(partnerProfit) && businessType === "LLC-P") {
@@ -420,16 +421,16 @@ function calculateFederalTax() {
     var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
 
     if (!isNaN(federalTax)) {
-        federalTaxOutput.textContent = "$" + federalTax.toFixed(1);
+        federalTaxOutput.textContent = "$" + federalTax.toFixed(0);
         federalTaxPercentageOutput.textContent = federalTaxPercentage + "%";
 
         // Calculate withholding tax based on partner profit
         var partnerProfit = parseFloat(partnerProfitOutput.textContent.replace("$", ""));
         if (!isNaN(partnerProfit)) {
             var withholdingTax = partnerProfit * 0.37;
-            document.getElementById("withholding-tax").textContent = "$" + withholdingTax.toFixed(1);
+            document.getElementById("withholding-tax").textContent = "$" + withholdingTax.toFixed(0);
         } else {
-            document.getElementById("withholding-tax").textContent = "N/A";
+            document.getElementById("withholding-tax").textContent = "0";
         }
     } else {
         federalTaxOutput.textContent = "N/A";
@@ -437,6 +438,7 @@ function calculateFederalTax() {
         document.getElementById("withholding-tax").textContent = "N/A"; // Limpiar el impuesto retenido
     }
 }
+
 
 
     
@@ -460,22 +462,36 @@ function calculateFederalTax() {
             calculateTotalEffectiveTaxPercentage();
         }
     
-    
-    
-    
-    
         function calculateTotalEffectiveTaxPercentage() {
-        var globalProfit = parseFloat(globalProfitInput.value);
-        var totalEffectiveTax = parseFloat(totalEffectiveTaxRateOutput.textContent.replace("$", ""));
-    
-        if (!isNaN(globalProfit) && !isNaN(totalEffectiveTax) && globalProfit > 0) {
-            var totalEffectiveTaxPercentage = (totalEffectiveTax / globalProfit) * 100;
-            document.getElementById("effective-tax-percentage").textContent = totalEffectiveTaxPercentage.toFixed(1) + "%";
+    var totalEffectiveTax = parseFloat(totalEffectiveTaxRateOutput.textContent.replace("$", ""));
+
+    if (!isNaN(totalEffectiveTax) && totalEffectiveTax > 0) {
+        var totalEffectiveTaxPercentage;
+
+        // Verificar si el tipo de negocio es LLC-P antes de calcular el porcentaje
+        if (businessTypeSelect.value.toUpperCase() === "LLC-P") {
+            var partnerProfit = parseFloat(partnerProfitOutput.textContent.replace("$", ""));
+            if (!isNaN(partnerProfit) && partnerProfit > 0) {
+                // Calcular el porcentaje efectivo basado en el beneficio del socio para LLC-P
+                totalEffectiveTaxPercentage = (totalEffectiveTax / partnerProfit) * 100;
+            } else {
+                totalEffectiveTaxPercentage = "N/A"; // Indicar que no se puede calcular el porcentaje si no se proporciona el beneficio del socio
+            }
         } else {
-            document.getElementById("effective-tax-percentage").textContent = "N/A";
+            // Para otros tipos de negocio, el porcentaje efectivo se mantiene como está
+            totalEffectiveTaxPercentage = totalEffectiveTax;
         }
+
+        // Mostrar el porcentaje efectivo de impuestos
+        document.getElementById("effective-tax-percentage").textContent = totalEffectiveTaxPercentage.toFixed(1) + "%";
+    } else {
+        document.getElementById("effective-tax-percentage").textContent = "N/A";
     }
-    
+}
+
+
+
+
     
     
     
@@ -565,4 +581,4 @@ function calculateFederalTax() {
             percentageLine.textContent = ""; // Ocultar el porcentaje si no es relevante
         }
     }
-        
+ 
