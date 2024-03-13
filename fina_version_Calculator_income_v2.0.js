@@ -364,6 +364,12 @@ document.addEventListener("DOMContentLoaded", function() {
             totalTaxStateOutput.textContent = "$" + stateTax.toFixed(0);
             if (stateTaxRate.percentage !== 0) {
                 percentageTaxStateOutput.textContent = stateTaxRate.percentage + "%";
+
+                // Verificar si se está imprimiendo contenido en ambos total-tax-state y percentage-tax-state
+                if (totalTaxStateOutput.textContent !== "" && percentageTaxStateOutput.textContent !== "") {
+                    // Concatenar los valores con un signo de igual en el medio y mostrarlo en percentage-tax-state
+                    percentageTaxStateOutput.textContent += " = " + totalTaxStateOutput.textContent;
+                }
             } else {
                 percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
             }
@@ -385,6 +391,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("withholding-tax").textContent = "0"; // Limpiar el impuesto retenido
     }
 }
+
 
     
     
