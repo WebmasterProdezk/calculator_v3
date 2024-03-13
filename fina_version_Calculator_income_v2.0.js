@@ -460,8 +460,8 @@ function calculateFederalTax() {
             var totalTax = stateTax + federalTax;
             console.log("Total Tax:", totalTax);
     
-            totalEffectiveTaxRateOutput.textContent = "$" + totalTax.toFixed(1);
-            console.log("Total Effective Tax Rate:", totalTax.toFixed(1));
+            totalEffectiveTaxRateOutput.textContent = "$" + totalTax.toFixed(0);
+            console.log("Total Effective Tax Rate:", totalTax.toFixed(0));
     
             calculateTotalEffectiveTaxPercentage();
         }
