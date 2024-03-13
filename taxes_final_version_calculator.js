@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var federalTaxOutput = document.getElementById("federal-tax");
         var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
         federalTaxPercentageOutput.textContent = "0%";
+        total-effective-tax-rate.textContent = "0%";
 
         
         function calculateTaxRefund() {
@@ -423,7 +424,7 @@ function calculateFederalTax() {
     if (!isNaN(federalTax)) {
         federalTaxOutput.textContent = "$" + federalTax.toFixed(0);
     } else {
-        federalTaxOutput.textContent = "N/A";
+        federalTaxOutput.textContent = "0";
     }
 
     if (!isNaN(federalTaxPercentage)) {
