@@ -10,8 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
         var partnerProfitOutput = document.getElementById("partner-profit");
         var federalTaxOutput = document.getElementById("federal-tax");
         var federalTaxPercentageOutput = document.getElementById("federal-tax-percentage");
-        federalTaxPercentageOutput.textContent = "0%";
-        total-effective-tax-rate.textContent = "0%";
+      
 
         
         function calculateTaxRefund() {
