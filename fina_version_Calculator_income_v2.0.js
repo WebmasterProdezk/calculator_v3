@@ -434,7 +434,7 @@ function calculateFederalTax() {
     }
 
     if (!isNaN(federalTaxPercentage)) {
-        federalTaxPercentageOutput.textContent = federalTaxPercentage + "%";
+        federalTaxPercentageOutput.textContent = federalTaxPercentage + "%" + " =";
     } else {
         federalTaxPercentageOutput.textContent = "0%"; // Cambio aquí, si es NaN, establecer en 0%
     }
