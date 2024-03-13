@@ -1,5 +1,4 @@
-
-    document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
         console.log("DOMContentLoaded event fired.");
     
         var globalProfitInput = document.getElementById("global-profit");
@@ -21,7 +20,7 @@
                 var taxRefund = withholdingTax - federalTax;
                 document.getElementById("tax-refund-value").textContent = "$" + taxRefund.toFixed(0);
             } else {
-                document.getElementById("tax-refund-value").textContent = "N/A";
+                document.getElementById("tax-refund-value").textContent = "0";
             }
         }
     
@@ -368,7 +367,7 @@
                 percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
             }
         } else {
-            totalTaxStateOutput.textContent = "N/A";
+            totalTaxStateOutput.textContent = "0";
             percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
         }
 
@@ -377,12 +376,12 @@
             var withholdingTax = partnerProfit * 0.37;
             document.getElementById("withholding-tax").textContent = "$" + withholdingTax.toFixed(0);
         } else {
-            document.getElementById("withholding-tax").textContent = "N/A";
+            document.getElementById("withholding-tax").textContent = "0";
         }
     } else {
-        totalTaxStateOutput.textContent = "N/A";
+        totalTaxStateOutput.textContent = "0";
         percentageTaxStateOutput.textContent = ""; // Limpiar si no hay porcentaje
-        document.getElementById("withholding-tax").textContent = "N/A"; // Limpiar el impuesto retenido
+        document.getElementById("withholding-tax").textContent = "0"; // Limpiar el impuesto retenido
     }
 }
 
@@ -433,9 +432,9 @@ function calculateFederalTax() {
             document.getElementById("withholding-tax").textContent = "0";
         }
     } else {
-        federalTaxOutput.textContent = "N/A";
-        federalTaxPercentageOutput.textContent = "N/A";
-        document.getElementById("withholding-tax").textContent = "N/A"; // Limpiar el impuesto retenido
+        federalTaxOutput.textContent = "0";
+        federalTaxPercentageOutput.textContent = "0";
+        document.getElementById("withholding-tax").textContent = "0"; // Limpiar el impuesto retenido
     }
 }
 
@@ -475,7 +474,7 @@ function calculateFederalTax() {
                 // Calcular el porcentaje efectivo basado en el beneficio del socio para LLC-P
                 totalEffectiveTaxPercentage = (totalEffectiveTax / partnerProfit) * 100;
             } else {
-                totalEffectiveTaxPercentage = "N/A"; // Indicar que no se puede calcular el porcentaje si no se proporciona el beneficio del socio
+                totalEffectiveTaxPercentage = "0"; // Indicar que no se puede calcular el porcentaje si no se proporciona el beneficio del socio
             }
         } else {
             // Para otros tipos de negocio, el porcentaje efectivo se mantiene como está
@@ -485,7 +484,7 @@ function calculateFederalTax() {
         // Mostrar el porcentaje efectivo de impuestos
         document.getElementById("effective-tax-percentage").textContent = totalEffectiveTaxPercentage.toFixed(1) + "%";
     } else {
-        document.getElementById("effective-tax-percentage").textContent = "N/A";
+        document.getElementById("effective-tax-percentage").textContent = "0";
     }
 }
 
@@ -503,7 +502,7 @@ function calculateFederalTax() {
                 var partnerProfit = (ownershipPercentage / 100) * globalProfit;
                 partnerProfitOutput.textContent = "$" + partnerProfit.toFixed(0);
             } else {
-                partnerProfitOutput.textContent = "N/A";
+                partnerProfitOutput.textContent = "0";
             }
         }
     
@@ -582,3 +581,5 @@ function calculateFederalTax() {
         }
     }
  
+  
+  
