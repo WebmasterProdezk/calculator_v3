@@ -349,6 +349,13 @@ if (stateTaxRate !== null) {
     } else {
         // Calcula el impuesto estatal basado en el global profit para otros tipos de negocio
         var globalProfit = parseFloat(globalProfitInput.value);
+        
+        //Si es el tipo es CORP y el monto es igual o menor a 50,000 en el estado seleccionado de florida el impuesto estatal es 0
+        if(businessType === "CORP" && globalProfit > 50000 && state === "florida"){
+            globalProfit = globalProfit - 50000;
+            console.log('Restante de valor florida: ' + globalProfit);
+        }
+        
         if (!isNaN(globalProfit)) {
             if (stateTaxRate.flat !== 0) {
                 stateTax = stateTaxRate.flat;
