@@ -559,7 +559,7 @@ if (!isNaN(totalEffectiveTax) && totalEffectiveTax > 0) {
             var globalProfit = parseFloat(globalProfitInput.value);
 
             if(businessType === "CORP" && globalProfit <= 50000 && state === "florida"){
-                return null;
+                return null; 
             }else{
                 return stateTaxRate[businessType];
             }
