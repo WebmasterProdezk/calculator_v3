@@ -350,7 +350,7 @@ if (stateTaxRate !== null) {
         // Calcula el impuesto estatal basado en el global profit para otros tipos de negocio
         var globalProfit = parseFloat(globalProfitInput.value);
         
-        //Si es el tipo es CORP y el monto es igual o menor a 50,000 en el estado seleccionado de florida el impuesto estatal es 0
+        //Si es el tipo es CORP y el monto es igual o menor a 50,000 en el estado seleccionado de florida se modifica el valor global
         if(businessType === "CORP" && globalProfit > 50000 && state === "florida"){
             globalProfit = globalProfit - 50000;
             console.log('Restante de valor florida: ' + globalProfit);
@@ -418,6 +418,11 @@ if (businessType === "CORP") {
     // Si el tipo de negocio es "CORP", el impuesto federal siempre es el 21%
     federalTaxPercentage = 21;
     federalTax = parseFloat(globalProfitInput.value) * 0.21; // Calcula el impuesto federal directamente como el 21% del global profit
+    //Si el monto es mayor a 50,000 en el estado seleccionado de florida se modifica el tax federal
+    if(parseFloat(globalProfitInput.value) > 50000 && businessStateSelect.value.toLowerCase() === "florida"){
+        federalTax = (parseFloat(globalProfitInput.value) - 50000) * 0.21; // Calcula el impuesto federal directamente como el 21% del global profit
+        console.log('Restante de valor florida: ' + federalTax);
+    }
 } else {
     var partnerProfit = parseFloat(partnerProfitOutput.textContent.replace("$", ""));
     if (!isNaN(partnerProfit) && businessType === "LLC-P") {
