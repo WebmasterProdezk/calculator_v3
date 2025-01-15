@@ -553,7 +553,17 @@ if (!isNaN(totalEffectiveTax) && totalEffectiveTax > 0) {
     function getStateTaxRate(state, businessType) {
         var stateTaxRate = taxRates[state];
         if (stateTaxRate && stateTaxRate[businessType]) {
-            return stateTaxRate[businessType];
+            
+            //Si es el tipo es CORP y el monto es igual o menor a 50,000 en el estado seleccionado de florida el impuesto estatal es 0
+
+            var globalProfit = parseFloat(globalProfitInput.value);
+
+            if(businessType === "CORP" && globalProfit <= 50000 && state === "florida"){
+                return null;
+            }else{
+                return stateTaxRate[businessType];
+            }
+
         }
         return null;
     }
