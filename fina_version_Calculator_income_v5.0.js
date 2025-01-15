@@ -521,13 +521,13 @@ if (!isNaN(totalEffectiveTax) && totalEffectiveTax > 0) {
     function calculateFederalTaxAmount(profit) {
         var taxAmount = 0;
         var brackets = [
-            { from: 0, to: 11000, rate: 0.10 },
-            { from: 11000, to: 44725, rate: 0.12 },
-            { from: 44725, to: 95375, rate: 0.22 },
-            { from: 95375, to: 182100, rate: 0.24 },
-            { from: 182100, to: 231250, rate: 0.32 },
-            { from: 231250, to: 578125, rate: 0.35 },
-            { from: 578125, to: Infinity, rate: 0.37 }
+            { from: 0, to: 11925, rate: 0.10 },
+            { from: 11925, to: 48475, rate: 0.12 },
+            { from: 48475, to: 103350, rate: 0.22 },
+            { from: 103350, to: 197300, rate: 0.24 },
+            { from: 197300, to: 250525, rate: 0.32 },
+            { from: 250525, to: 626350, rate: 0.35 },
+            { from: 626350, to: Infinity, rate: 0.37 }
         ];
 
         for (var i = 0; i < brackets.length; i++) {
