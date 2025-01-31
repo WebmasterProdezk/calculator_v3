@@ -939,15 +939,15 @@ function moneyFormat(the_value_to_format) {
 
 var variable;
 
-/*$(".why-box")
+$(".why-box")
   .eq(1 - 1)
-  .addClass("active");*/
+  .addClass("active");
 
 $(".home-faq-item")
   .eq(1 - 1)
   .addClass("active");
 
-/*$(".why-trigger-box").on("click", function () {
+$(".why-trigger-box").on("click", function () {
   if ($(this).parents(".why-box").prev(".why-box").hasClass("no-border")) {
     variable = false;
   } else {
@@ -961,7 +961,7 @@ $(".home-faq-item")
   }
   $(this).parents(".why-box").siblings(".why-box").removeClass("active");
   $(this).parents(".why-box").toggleClass("active");
-});*/
+});
 
 $(".home-faq-trigger").on("click", function () {
   if (
