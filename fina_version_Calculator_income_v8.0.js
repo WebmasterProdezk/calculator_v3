@@ -327,7 +327,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "LLC-P": { percentage: 5.0, flat: 0 },
     },
     delaware: {
-      CORP: { percentage: 8.7, flat: 0 },
+      CORP: { percentage: 0, flat: 0 },
       "LLC-D": { percentage: 0, flat: 300 },
       "LLC-P": { percentage: 4.4, flat: 0 },
     },
@@ -443,7 +443,7 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     "new york": {
       CORP: { percentage: 7.43, flat: 0 },
-      "LLC-D": { percentage: 0, flat: 1395 },
+      "LLC-D": { percentage: 0, flat: 25 },
       "LLC-P": { percentage: 0, flat: 2375 },
     },
     "new mexico": {
