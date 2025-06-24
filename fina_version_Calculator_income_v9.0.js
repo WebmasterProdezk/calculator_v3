@@ -229,14 +229,12 @@ document.addEventListener("DOMContentLoaded", function () {
     var withholdingTax = parseFloat(
       document
         .getElementById("withholding-tax")
-        .textContent.replace("$", "")
-        .replace(",", "")
+        .textContent.replace(/[$,]/g, "")
     );
     var federalTax = parseFloat(
       document
         .getElementById("federal-tax")
-        .textContent.replace("$", "")
-        .replace(",", "")
+        .textContent.replace(/[$,]/g, "")
     );
 
     if (!isNaN(withholdingTax) && !isNaN(federalTax)) {
@@ -725,13 +723,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function calculateTotalEffectiveTaxRate() {
     var stateTax = parseFloat(
-      totalTaxStateOutput.textContent.replace("$", "").replace(",", "")
+      totalTaxStateOutput.textContent.replace(/[$,]/g, "")
     );
     var federalTax = parseFloat(
       document
         .getElementById("federal-tax")
-        .textContent.replace("$", "")
-        .replace(",", "")
+        .textContent.replace(/[$,]/g, "")
     );
 
     console.log("State Tax:", stateTax);
@@ -749,7 +746,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function calculateTotalEffectiveTaxPercentage() {
     var totalEffectiveTax = parseFloat(
-      totalEffectiveTaxRateOutput.textContent.replace("$", "").replace(",", "")
+      totalEffectiveTaxRateOutput.textContent.replace(/[$,]/g, "")
     );
 
     if (!isNaN(totalEffectiveTax) && totalEffectiveTax > 0) {
